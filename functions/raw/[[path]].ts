@@ -24,6 +24,11 @@ export async function onRequestGet(context) {
     headers.set("Cache-Control", "max-age=31536000");
   }
 
+  const contentType = headers.get("Content-Type") || "";
+  if (contentType.startsWith("text/") && !contentType.toLowerCase().includes("charset")) {
+    headers.set("Content-Type", contentType + "; charset=utf-8");
+  }
+
   return new Response(response.body, {
     headers: headers,
     status: response.status,
