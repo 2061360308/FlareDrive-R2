@@ -267,7 +267,6 @@ export default {
     uploadProgress: null,
     uploadQueue: [],
     backgroundImageUrl: "/assets/bg-light.webp",
-    markdownRenderer: null,
   }),
 
   computed: {
@@ -366,16 +365,9 @@ export default {
       localStorage.removeItem("fdAuth");
     },
 
-    async ensureMarkdownRenderer() {
-      if (this.markdownRenderer) return;
-      const { marked } = await import("https://cdn.jsdelivr.net/npm/marked@11.2.0/lib/marked.esm.js");
-      marked.setOptions({ breaks: true, gfm: true });
-      this.markdownRenderer = marked;
-    },
-
-    async renderMarkdown(markdown) {
-      await this.ensureMarkdownRenderer();
-      return this.markdownRenderer.parse(markdown);
+    renderMarkdown(markdown) {
+      if (!window.marked) throw new Error("Markdown 库加载失败");
+      return window.marked.parse(markdown);
     },
 
     async fetchReadme() {
@@ -390,7 +382,7 @@ export default {
         }
         if (!res.ok) throw new Error("读取 README.md 失败");
         const markdown = await res.text();
-        this.readmeHtml = await this.renderMarkdown(markdown || "# README\n暂无内容");
+        this.readmeHtml = this.renderMarkdown(markdown || "# README\n暂无内容");
       } catch (error) {
         this.readmeError = error.message || "无法加载 README.md";
       } finally {
