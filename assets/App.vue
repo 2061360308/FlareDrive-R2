@@ -234,7 +234,7 @@
   </div>
 </template>
 
-<script>
+<script type="module">
 import { generateThumbnail, blobDigest, multipartUpload, SIZE_LIMIT } from "/assets/main.mjs";
 import Dialog from "./Dialog.vue";
 import Menu from "./Menu.vue";
